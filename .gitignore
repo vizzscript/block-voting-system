@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.toast
+.spi
+.gla
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+
+# Databases
+voting.db
+*.db
+*.sqlite3
+
+# Node / JS
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# OS Files
+.DS_Store
+Thumbs.db

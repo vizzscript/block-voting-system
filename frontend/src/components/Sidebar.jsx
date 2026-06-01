@@ -7,6 +7,10 @@ import PollIcon from '@mui/icons-material/Poll';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import SchoolIcon from '@mui/icons-material/School';
+import HowToVoteIcon from '@mui/icons-material/HowToVote';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -25,12 +29,16 @@ const Sidebar = ({ open, variant, onClose }) => {
         { text: 'Manage Users', icon: <PeopleIcon />, path: '/admin/users' },
         { text: 'Manage Candidates', icon: <HowToRegIcon />, path: '/admin/candidates' },
         { text: 'Manage Elections', icon: <PollIcon />, path: '/admin/elections' },
+        { text: 'Blockchain Ledger', icon: <AccountTreeIcon />, path: '/admin/blockchain' },
+        { text: 'Election Results', icon: <BarChartIcon />, path: '/admin/results' },
       ]
     : [
         { text: 'Dashboard', icon: <DashboardIcon />, path: '/student/dashboard' },
         { text: 'My Profile', icon: <AccountBoxIcon />, path: '/student/profile' },
         { text: 'View Candidates', icon: <HowToRegIcon />, path: '/student/candidates' },
         { text: 'View Elections', icon: <PollIcon />, path: '/student/elections' },
+        { text: 'Cast Vote', icon: <HowToVoteIcon />, path: '/student/vote' },
+        { text: 'Verify Vote', icon: <VerifiedUserIcon />, path: '/student/verify' },
       ];
 
   return (
