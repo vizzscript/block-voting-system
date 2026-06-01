@@ -1,8 +1,8 @@
 # 🗳️ Blockchain-Based Secure Voting Mechanism for College Elections
 
-> **Phase 1** — User Management, Candidate Management & Election Management modules
+> **Phase 1 & Phase 2 Fully Completed** — User Management, Elections, Custom Cryptographic Blockchain Engine, and Results Visualization.
 
-A full-stack web application for conducting transparent, secure college elections. Built with **FastAPI** (Python) on the backend and **React.js** with **Material UI** on the frontend, orchestrated via **Docker Compose**.
+A full-stack web application for conducting transparent, secure college elections. Built with **FastAPI** (Python) on the backend and **React.js** with **Material UI** on the frontend, featuring a custom, mathematically-verifiable Proof-of-Work blockchain to guarantee election integrity.
 
 ---
 
@@ -13,36 +13,26 @@ block-voting-system/
 ├── backend/                    # FastAPI Python Backend
 │   ├── app/
 │   │   ├── api/               # REST API endpoints & dependencies
-│   │   │   ├── deps.py        # JWT extraction & DB session injection
 │   │   │   └── v1/
-│   │   │       ├── api.py     # API router aggregator
-│   │   │       └── endpoints/ # auth, users, candidates, elections
+│   │   │       ├── endpoints/ # auth, users, candidates, elections, votes, blockchain, results
 │   │   ├── core/              # Configuration, security, DB engine
-│   │   ├── models/            # SQLAlchemy ORM models
-│   │   ├── repositories/      # Data access layer (base + per-entity)
+│   │   ├── models/            # SQLAlchemy ORM models (Users, Blocks, Transactions, Receipts)
 │   │   ├── schemas/           # Pydantic request/response schemas
-│   │   ├── services/          # Business logic layer
+│   │   ├── services/          # Business logic (Crypto Engine, PoW Mining, Merkle Trees)
 │   │   └── utils/             # Admin seeding & helpers
-│   ├── alembic/               # Database migration configs
-│   ├── tests/                 # Pytest unit test suite
+│   ├── tests/                 # Pytest unit & integration test suite (30 Tests)
 │   ├── main.py                # FastAPI app entrypoint
-│   ├── requirements.txt       # Python dependencies
-│   └── Dockerfile
+│   └── requirements.txt       # Python dependencies
 ├── frontend/                   # React.js + Vite Frontend
 │   ├── src/
-│   │   ├── components/        # Reusable UI components
-│   │   ├── layouts/           # Dashboard layout with sidebar/navbar
 │   │   ├── pages/             # Route-level page components
-│   │   │   ├── admin/         # Admin dashboard, manage users/candidates/elections
-│   │   │   └── student/       # Student dashboard, profile, candidates, elections
+│   │   │   ├── admin/         # Admin dashboard, Blockchain Explorer, Results Dashboards
+│   │   │   └── student/       # Cast Vote (Signing), Verify Receipt, Profile
 │   │   ├── services/          # Axios API client with JWT interceptors
-│   │   ├── store/             # Redux Toolkit slices & store
-│   │   ├── App.jsx            # Root component with routing
-│   │   ├── theme.js           # MUI dark theme configuration
-│   │   └── main.jsx           # Vite entry point
-│   ├── package.json
-│   └── Dockerfile
-└── docker-compose.yml          # Multi-container orchestration
+│   │   ├── store/             # Redux Toolkit slices (auth, elections, blockchain)
+│   │   └── App.jsx            # Root component with routing
+│   └── package.json
+└── DEVELOPER_SETUP_GUIDE.md    # Guide for running the project locally
 ```
 
 ---
@@ -51,151 +41,100 @@ block-voting-system/
 
 | Layer      | Technology                                          |
 |------------|-----------------------------------------------------|
-| Frontend   | React 18, Vite 5, Material UI 5, Redux Toolkit 2   |
+| Frontend   | React 18, Vite 5, Material UI 5, Redux Toolkit, Chart.js |
 | Backend    | Python 3.10+, FastAPI, SQLAlchemy 2.0, Pydantic V2  |
-| Database   | PostgreSQL 15 (Docker), SQLite (testing)            |
+| Database   | SQLite (Local Development & Testing)                |
+| Crypto     | RSA-2048, AES-256 (CBC), SHA-256, PBKDF2            |
 | Auth       | JWT (python-jose), bcrypt (passlib)                 |
-| DevOps     | Docker, Docker Compose, Alembic migrations          |
 
 ---
 
 ## 📦 Quick Start
 
-### Prerequisites
-- Docker & Docker Compose **OR** Python 3.10+ and Node.js 18+
+To run this project locally, please refer to our dedicated setup guide:
 
-### Option 1: Docker Compose (Recommended)
+👉 **[DEVELOPER_SETUP_GUIDE.md](./DEVELOPER_SETUP_GUIDE.md)**
 
-```bash
-# Clone the repository
-git clone <repository-url>
-cd block-voting-system
-
-# Build and start all services
-docker compose up -d --build
-
-# Services will be available at:
-#   Frontend  → http://localhost:5173
-#   Backend   → http://localhost:8000
-#   API Docs  → http://localhost:8000/docs
-```
-
-### Option 2: Local Development
-
-**Backend:**
-```bash
-cd backend
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
-
-# Set environment variables
-export DATABASE_URL=postgresql://postgres:postgrespassword@localhost:5432/voting_system
-export SECRET_KEY=your-secret-key
-
-# Run the server
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-
-**Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
+This guide provides exactly what you need to clone, install dependencies, seed the database, and launch both servers locally using SQLite.
 
 ---
 
 ## 🔐 Default Admin Credentials
 
-The system auto-seeds an admin account on first startup:
+When the database is initialized, the system auto-seeds an admin account and creates their RSA key pair:
 
 | Field    | Value                  |
 |----------|------------------------|
 | Email    | `admin@college.edu`    |
-| Password | `admin123`             |
+| Password | `adminpassword123`     |
 | Role     | `admin`                |
 
 > ⚠️ **Change these credentials in production!**
 
 ---
 
-## 🧪 Running Tests
+## 🧪 Testing Coverage
+
+The system includes a robust integration and unit testing suite covering API flows, authentication, and cryptographic integrity.
 
 ```bash
-# From project root
-python -m venv venv && source venv/bin/activate
-pip install -r backend/requirements.txt
-
-# Run with SQLite override (no Docker needed)
+# Run with SQLite override
 export DATABASE_URL=sqlite:// && PYTHONPATH=backend pytest backend/tests/ -v
 ```
 
-**Test Coverage:**
-- ✅ Authentication: Registration, Login, Token Refresh, Profile Management
-- ✅ Candidates: Admin CRUD, Student access restrictions
-- ✅ Elections: Lifecycle transitions (Draft → Active → Completed), Date validation
+**Test Coverage (30 Passing Tests):**
+- ✅ **Authentication:** Registration, Login, Token Refresh
+- ✅ **Cryptography:** RSA Key Generation, AES encryption, PBKDF2 padding
+- ✅ **Blockchain Engine:** Merkle Tree derivation, SHA-256 integrity, PoW Mining automation
+- ✅ **Elections & Candidates:** CRUD operations, Date validations
+- ✅ **Voting Integration:** End-to-end voting, double-voting prevention, independent receipt verification
 
 ---
 
 ## 📡 API Endpoints
 
-### Authentication (`/api/v1/auth`)
-| Method | Endpoint      | Description              | Auth  |
-|--------|---------------|--------------------------|-------|
-| POST   | `/register`   | Register new student     | No    |
-| POST   | `/login`      | Login & receive JWT      | No    |
-| POST   | `/refresh`    | Refresh access token     | JWT   |
+### Authentication & Users
+| Method | Endpoint                    | Description              | Auth  |
+|--------|-----------------------------|--------------------------|-------|
+| POST   | `/api/v1/auth/register`     | Register new student     | No    |
+| POST   | `/api/v1/auth/login`        | Login & receive JWT      | No    |
+| GET    | `/api/v1/users/profile`     | Get current user profile | JWT   |
 
-### Users (`/api/v1/users`)
-| Method | Endpoint      | Description              | Auth    |
-|--------|---------------|--------------------------|---------|
-| GET    | `/profile`    | Get current user profile | JWT     |
-| PUT    | `/profile`    | Update profile details   | JWT     |
-| GET    | `/students`   | List all students        | Admin   |
+### Candidates & Elections
+| Method | Endpoint                    | Description              | Auth    |
+|--------|-----------------------------|--------------------------|---------|
+| GET    | `/api/v1/candidates`        | List candidates          | JWT     |
+| POST   | `/api/v1/candidates`        | Register new candidate   | Admin   |
+| GET    | `/api/v1/elections`         | List all elections       | JWT     |
+| PATCH  | `/api/v1/elections/{id}/activate` | Activate election  | Admin   |
 
-### Candidates (`/api/v1/candidates`)
-| Method | Endpoint       | Description              | Auth    |
-|--------|----------------|--------------------------|---------|
-| GET    | `/`            | List/search candidates   | JWT     |
-| POST   | `/`            | Register new candidate   | Admin   |
-| GET    | `/{id}`        | Get candidate details    | JWT     |
-| PUT    | `/{id}`        | Update candidate         | Admin   |
-| DELETE | `/{id}`        | Delete candidate         | Admin   |
-
-### Elections (`/api/v1/elections`)
-| Method | Endpoint            | Description              | Auth    |
-|--------|---------------------|--------------------------|---------|
-| GET    | `/`                 | List all elections       | JWT     |
-| POST   | `/`                 | Create new election      | Admin   |
-| GET    | `/{id}`             | Get election details     | JWT     |
-| PUT    | `/{id}`             | Update election          | Admin   |
-| DELETE | `/{id}`             | Delete election          | Admin   |
-| PATCH  | `/{id}/activate`    | Activate election        | Admin   |
-| PATCH  | `/{id}/close`       | Close election           | Admin   |
-| GET    | `/{id}/stats`       | Get election statistics  | Admin   |
+### Voting & Blockchain Engine
+| Method | Endpoint                    | Description                    | Auth    |
+|--------|-----------------------------|--------------------------------|---------|
+| POST   | `/api/v1/votes/cast`        | Digitally sign & cast vote     | JWT     |
+| GET    | `/api/v1/votes/verify/{id}` | Independent receipt auditor    | JWT     |
+| GET    | `/api/v1/votes/history`     | Student's voting history       | JWT     |
+| GET    | `/api/v1/blockchain/chain`  | Fetch ledger for explorer      | Admin   |
+| GET    | `/api/v1/blockchain/validate`| Live cryptographic chain audit | Admin  |
+| GET    | `/api/v1/results/{id}`      | Get Merkle-audited tallies     | Admin   |
 
 ---
 
-## 🎨 Frontend Features
+## 🎨 System Features
 
-- **Premium Dark Theme** with glassmorphism and neon-cyan accents
-- **Role-Based Dashboards** — separate views for Admin and Student
-- **JWT Token Management** — automatic token refresh via Axios interceptors
-- **React Hook Form** — client-side validation on all forms
-- **Redux Toolkit** — centralized state management for auth, candidates, elections
-- **Responsive Layout** — adaptive sidebar with mobile drawer support
+### Cryptographic Security
+- **Asymmetric Signatures:** Every vote is mathematically signed using the student's personal RSA-2048 private key.
+- **Voter Anonymity:** Votes are tracked via a salted `sha256(student_id + election_id)` hash; names are never attached to ballots.
+- **Tamper-Evident Ledger:** A Proof-of-Work blockchain validates all incoming blocks via Merkle Roots and sequential hash mapping.
 
----
-
-## 🔮 Phase 2 (Planned)
-
-- Blockchain-based vote casting with on-chain verification
-- Vote tallying and result generation
-- Blockchain explorer for audit trails
-- Real-time election monitoring
+### Frontend Dashboards
+- **Premium UI:** Glassmorphism, neon-cyan accents, and responsive drawers built with Material UI.
+- **Student Auditor:** Independent `VoteVerification.jsx` portal to verify receipt IDs against the chain.
+- **Admin Explorer:** Internal `BlockchainExplorer.jsx` to trace nonces, block indexes, and live chain validations.
+- **Chart.js Results:** Interactive `ElectionResults.jsx` calculating live voter turnout, pie shares, and nominal bar statistics.
 
 ---
 
 ## 📄 License
 
-This project is developed as part of an academic capstone project.
+This project is developed as part of an academic capstone project focused on applied cryptography and software architecture.
