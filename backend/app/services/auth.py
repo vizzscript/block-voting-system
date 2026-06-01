@@ -7,6 +7,7 @@ from app.core.config import settings
 from app.repositories.user import user_repository
 from app.schemas.user import UserRegister, UserLogin, Token
 from app.models.user import User
+from app.services.crypto import generate_key_pair, encrypt_private_key
 
 class AuthService:
     def register(self, db: Session, *, user_in: UserRegister) -> User:
@@ -32,11 +33,17 @@ class AuthService:
                 detail="A user with this Email address is already registered."
             )
             
+        # Generate RSA-2048 key pair for cryptographic vote signing
+        private_pem, public_pem = generate_key_pair()
+        encrypted_pem = encrypt_private_key(private_pem, user_in.password)
+
         # Create student user
         user_data = user_in.model_dump(exclude={"confirm_password", "password"})
         user_data["password_hash"] = get_password_hash(user_in.password)
         user_data["role"] = "student"
         user_data["is_active"] = True
+        user_data["rsa_public_key"] = public_pem
+        user_data["encrypted_rsa_private_key"] = encrypted_pem
         
         return user_repository.create(db, obj_in=user_data)
 

@@ -20,12 +20,16 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import StudentProfile from './pages/student/Profile';
 import StudentCandidates from './pages/student/Candidates';
 import StudentElections from './pages/student/Elections';
+import CastVote from './pages/student/CastVote';
+import VoteVerification from './pages/student/VoteVerification';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ManageUsers from './pages/admin/ManageUsers';
 import ManageCandidates from './pages/admin/ManageCandidates';
 import ManageElections from './pages/admin/ManageElections';
+import BlockchainExplorer from './pages/admin/BlockchainExplorer';
+import ElectionResults from './pages/admin/ElectionResults';
 
 function App() {
   return (
@@ -54,6 +58,8 @@ function App() {
                 <Route path="profile" element={<StudentProfile />} />
                 <Route path="candidates" element={<StudentCandidates />} />
                 <Route path="elections" element={<StudentElections />} />
+                <Route path="vote" element={<CastVote />} />
+                <Route path="verify" element={<VoteVerification />} />
               </Route>
 
               {/* Admin Protected Portal */}
@@ -70,6 +76,8 @@ function App() {
                 <Route path="users" element={<ManageUsers />} />
                 <Route path="candidates" element={<ManageCandidates />} />
                 <Route path="elections" element={<ManageElections />} />
+                <Route path="blockchain" element={<BlockchainExplorer />} />
+                <Route path="results" element={<ElectionResults />} />
               </Route>
 
               {/* Catch All redirect to Landing Home */}
