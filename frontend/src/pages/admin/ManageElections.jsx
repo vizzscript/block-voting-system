@@ -119,11 +119,17 @@ const ManageElections = () => {
   };
 
   const onSubmit = (data) => {
-    // Append standard 'Z' Zulu tags for standardized backend Pydantic validations
+    const toUTC = (localStr) => {
+      if (!localStr) return '';
+      if (localStr.includes('Z')) return localStr;
+      const date = new Date(localStr);
+      return date.toISOString();
+    };
+
     const electionData = {
       ...data,
-      startDate: data.startDate.includes('Z') ? data.startDate : `${data.startDate}:00Z`,
-      endDate: data.endDate.includes('Z') ? data.endDate : `${data.endDate}:00Z`,
+      startDate: toUTC(data.startDate),
+      endDate: toUTC(data.endDate),
     };
 
     if (editingElection) {
